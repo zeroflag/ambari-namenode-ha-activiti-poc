@@ -21,7 +21,7 @@
           <!-- MainClass in mainfest make a executable jar -->
           <archive>
             <manifest>
-              <mainClass>com.example.OnboardingRequest</mainClass>
+              <mainClass>com.example.EnableNameNodeRequest</mainClass>
             </manifest>
           </archive>
         </configuration>
