@@ -119,4 +119,12 @@ public class EnableNameNodeRequest {
     }
     scanner.close();
   }
+// manual step 1 (check point)
+//  println "c6401: sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter'"
+//  println "c6401: sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'"
+// manual step 2 (init journal node)
+//  println "c6401: sudo su hdfs -l -c 'hdfs namenode -initializeSharedEdits'"
+// manual step 3 (metadata)
+//  println "c6401: sudo su hdfs -l -c 'hdfs zkfc -formatZK'"
+//  println "c6402: sudo su hdfs -l -c 'hdfs namenode -bootstrapStandby'"
 }

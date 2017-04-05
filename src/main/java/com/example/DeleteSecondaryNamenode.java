@@ -1,10 +1,12 @@
 package com.example;
 
-import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.JavaDelegate;
+import static java.util.Collections.singletonList;
 
-public class DeleteSecondaryNamenode implements JavaDelegate {
+import org.activiti.engine.delegate.DelegateExecution;
+
+public class DeleteSecondaryNamenode extends ServiceTask {
   public void execute(DelegateExecution delegateExecution) throws Exception {
     System.out.println("Deleting Secondary NameNode");
+    client.deleteHostComponents("c6401.ambari.apache.org", singletonList("SECONDARY_NAMENODE"));
   }
 }
