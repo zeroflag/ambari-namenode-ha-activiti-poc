@@ -79,9 +79,6 @@
       <conditionExpression xsi:type="tFormalExpression"/>
     </sequenceFlow>
     <sequenceFlow id="_30" sourceRef="review" targetRef="_27"/>
-    <serviceTask activiti:class="com.example.GetHostConfig" activiti:exclusive="true" id="getHostConfig" name="Get Host Configuration"/>
-    <sequenceFlow id="_11" sourceRef="getNameServiceId" targetRef="getHostConfig"/>
-    <sequenceFlow id="_13" sourceRef="getHostConfig" targetRef="selectHosts"/>
     <exclusiveGateway gatewayDirection="Unspecified" id="_9" name="Checkpoint Created"/>
     <sequenceFlow id="_14" sourceRef="createCheckPoint" targetRef="_9"/>
     <sequenceFlow id="_15" name="yes" sourceRef="_9" targetRef="configureComponents">
@@ -100,6 +97,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${journalNodeInitialized == "yes"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_22" sourceRef="_37" targetRef="initJournalNode"/>
+    <sequenceFlow id="_32" sourceRef="getNameServiceId" targetRef="selectHosts"/>
   </process>
   <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
     <bpmndi:BPMNPlane bpmnElement="enableNamenodeHaProcess">
@@ -173,12 +171,6 @@
         <omgdc:Bounds height="32.0" width="32.0" x="740.0" y="255.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="getHostConfig" id="Shape-getHostConfig">
-        <omgdc:Bounds height="55.0" width="240.0" x="640.0" y="60.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="240.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_9" id="Shape-_9" isMarkerVisible="false">
@@ -366,23 +358,9 @@
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="getNameServiceId" targetElement="getHostConfig">
-        <omgdi:waypoint x="515.0" y="87.5"/>
-        <omgdi:waypoint x="640.0" y="87.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="installAdditionalNamenode" targetElement="installJournalNodes">
         <omgdi:waypoint x="1090.0" y="412.5"/>
         <omgdi:waypoint x="1150.0" y="412.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_13" id="BPMNEdge__13" sourceElement="getHostConfig" targetElement="selectHosts">
-        <omgdi:waypoint x="640.0" y="87.5"/>
-        <omgdi:waypoint x="520.0" y="192.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
@@ -509,6 +487,13 @@
       <bpmndi:BPMNEdge bpmnElement="_33" id="BPMNEdge__33" sourceElement="_25" targetElement="finalizeSetup">
         <omgdi:waypoint x="462.0" y="886.0"/>
         <omgdi:waypoint x="690.0" y="827.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_32" id="BPMNEdge__32" sourceElement="getNameServiceId" targetElement="selectHosts">
+        <omgdi:waypoint x="420.0" y="120.0"/>
+        <omgdi:waypoint x="420.0" y="165.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
