@@ -13,7 +13,7 @@ public class ReconfigureHdfs extends ServiceTask {
     System.out.println("Reconfiguring Hdfs");
     client.modifyConfiguration(
       "hdfs-site",
-       gson.fromJson("{\n" +
+       gson.fromJson(("{\n" +
         "          \"dfs.block.access.token.enable\": \"true\",\n" +
         "          \"dfs.blockreport.initialDelay\": \"120\",\n" +
         "          \"dfs.blocksize\": \"134217728\",\n" +
@@ -80,14 +80,14 @@ public class ReconfigureHdfs extends ServiceTask {
         "          \"dfs.namenode.shared.edits.dir\": \"qjournal:\\/\\/__NEWNNHOST__:8485;__OLDNNHOST__:8485;c6403.ambari.apache.org:8485\\/myserviceid\",\n" +
         "          \"dfs.ha.fencing.methods\": \"shell(\\/bin\\/true)\",\n" +
         "          \"dfs.ha.automatic-failover.enabled\": true\n" +
-        "      }"
+        "      }")
           .replaceAll("myserviceid", serviceId(context))
           .replaceAll("__OLDNNHOST__", hosts(context).currentNameNodeHost)
           .replaceAll("__NEWNNHOST__", hosts(context).newNameNodeHost), Map.class)
     );
     client.modifyConfiguration(
       "core-site",
-       gson.fromJson("{\n" +
+       gson.fromJson(("{\n" +
          "          \"fs.defaultFS\": \"hdfs:\\/\\/myserviceid\",\n" +
          "          \"fs.trash.interval\": \"360\",\n" +
          "          \"ha.failover-controller.active-standby-elector.zk.op.retries\": \"120\",\n" +
@@ -109,7 +109,7 @@ public class ReconfigureHdfs extends ServiceTask {
          "          \"mapreduce.jobtracker.webinterface.trusted\": \"false\",\n" +
          "          \"net.topology.script.file.name\": \"\\/etc\\/hadoop\\/conf\\/topology_script.py\",\n" +
          "          \"ha.zookeeper.quorum\": \"__NEWNNHOST__:2181,c6403.ambari.apache.org:2181,__OLDNNHOST__:2181\"\n" +
-         "        }"
+         "        }")
            .replaceAll("myserviceid", serviceId(context))
            .replaceAll("__OLDNNHOST__", hosts(context).currentNameNodeHost)
            .replaceAll("__NEWNNHOST__", hosts(context).newNameNodeHost), Map.class)
