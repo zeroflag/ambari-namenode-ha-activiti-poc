@@ -4,12 +4,11 @@ import java.util.Scanner;
 
 public class ConsoleUI implements UI {
   private final Scanner scanner = new Scanner(System.in);
-  private String nameServiceId = "";
-  private String newNameNodeHost = "";
+  private String nameServiceId;
+  private String newNameNodeHost;
 
   @Override
   public String gettingStarted() {
-    String nameServiceId;
     System.out.println("\nGet Started");
     System.out.println("===========");
     System.out.println("This wizard will walk you through enabling NameNode HA on your cluster\n" +
@@ -25,7 +24,6 @@ public class ConsoleUI implements UI {
 
   @Override
   public String selectHosts() {
-    String newNameNodeHost;
     System.out.println("\nSelect Hosts");
     System.out.println("===========");
     System.out.println("Select a host that will be running the additional NameNode. In addition," +
