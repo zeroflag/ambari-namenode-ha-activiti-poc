@@ -1,4 +1,4 @@
-package com.example;
+package com.example.workflow.servicetask;
 
 import java.util.Map;
 

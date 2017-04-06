@@ -21,7 +21,7 @@
           <!-- MainClass in mainfest make a executable jar -->
           <archive>
             <manifest>
-              <mainClass>com.example.EnableNameNodeRequest</mainClass>
+              <mainClass>com.example.EnableNameNodeHa</mainClass>
             </manifest>
           </archive>
         </configuration>

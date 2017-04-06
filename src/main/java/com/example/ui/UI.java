@@ -1,4 +1,4 @@
-package com.example;
+package com.example.ui;
 
 public interface UI {
   String gettingStarted();

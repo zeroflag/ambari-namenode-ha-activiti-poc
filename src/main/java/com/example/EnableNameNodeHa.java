@@ -17,7 +17,10 @@ import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
-public class EnableNameNodeRequest {
+import com.example.ui.ConsoleUI;
+import com.example.ui.UI;
+
+public class EnableNameNodeHa {
 
   public static void main(String[] args) throws ParseException {
     ProcessEngine processEngine = processEngine();

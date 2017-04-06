@@ -1,7 +1,8 @@
-package com.example;
+package com.example.workflow.servicetask;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.JavaDelegate;
+
+import com.example.workflow.servicetask.ServiceTask;
 
 public class StartFailoverController extends ServiceTask {
   public void execute(DelegateExecution delegateExecution) throws Exception {

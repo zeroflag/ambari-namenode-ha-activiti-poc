@@ -1,4 +1,4 @@
-package com.example;
+package com.example.workflow.servicetask;
 
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;

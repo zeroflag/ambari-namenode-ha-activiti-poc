@@ -1,4 +1,4 @@
-package com.example;
+package com.example.workflow.servicetask;
 
 import static java.util.Collections.singletonList;
 
