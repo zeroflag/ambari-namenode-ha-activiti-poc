@@ -32,14 +32,14 @@
     <sequenceFlow id="_12" sourceRef="EnableNamenodeHa" targetRef="getNameServiceId"/>
     <sequenceFlow id="_18" sourceRef="startComponents" targetRef="initMetadata"/>
     <subProcess activiti:exclusive="true" id="configureComponents" name="Configure Components" triggeredByEvent="false">
-      <serviceTask activiti:class="com.example.StopAllServices" activiti:exclusive="true" id="stopAllServices" name="Stop all services"/>
-      <serviceTask activiti:class="com.example.InstallAdditionalNamenode" activiti:exclusive="true" id="installAdditionalNamenode" name="Install Additional Namenode"/>
-      <serviceTask activiti:class="com.example.InstallJournalNodes" activiti:exclusive="true" id="installJournalNodes" name="Install JournalNodes"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StopAllServices" activiti:exclusive="true" id="stopAllServices" name="Stop all services"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.InstallAdditionalNamenode" activiti:exclusive="true" id="installAdditionalNamenode" name="Install Additional Namenode"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.InstallJournalNodes" activiti:exclusive="true" id="installJournalNodes" name="Install JournalNodes"/>
       <sequenceFlow id="_42" sourceRef="stopAllServices" targetRef="installAdditionalNamenode"/>
-      <serviceTask activiti:class="com.example.StartJournalNodes" activiti:exclusive="true" id="startJournalNodes" name="Start JournalNodes"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StartJournalNodes" activiti:exclusive="true" id="startJournalNodes" name="Start JournalNodes"/>
       <sequenceFlow id="_10" sourceRef="installAdditionalNamenode" targetRef="installJournalNodes"/>
-      <serviceTask activiti:class="com.example.ReconfigureHdfs" activiti:exclusive="true" id="reconfigureHdfs" name="Reconfigure HDFS"/>
-      <serviceTask activiti:class="com.example.DisableSecondaryNamenode" activiti:exclusive="true" id="disableSecondaryNamenode" name="Disable Secondary Namenode"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.ReconfigureHdfs" activiti:exclusive="true" id="reconfigureHdfs" name="Reconfigure HDFS"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.DisableSecondaryNamenode" activiti:exclusive="true" id="disableSecondaryNamenode" name="Disable Secondary Namenode"/>
       <sequenceFlow id="_16" sourceRef="installJournalNodes" targetRef="reconfigureHdfs"/>
       <sequenceFlow id="_17" sourceRef="reconfigureHdfs" targetRef="startJournalNodes"/>
       <sequenceFlow id="_19" sourceRef="startJournalNodes" targetRef="disableSecondaryNamenode"/>
@@ -48,19 +48,19 @@
     </subProcess>
     <sequenceFlow id="_24" sourceRef="configureComponents" targetRef="initJournalNode"/>
     <subProcess activiti:exclusive="true" id="finalizeSetup" name="Finalize setup" triggeredByEvent="false">
-      <serviceTask activiti:class="com.example.StartAdditionalNamenode" activiti:exclusive="true" id="startAdditionalNamenode" name="Start Additional Namenode"/>
-      <serviceTask activiti:class="com.example.InstallFailoverController" activiti:exclusive="true" id="installFailoverControllers" name="Install Failover Controllers"/>
-      <serviceTask activiti:class="com.example.StartFailoverController" activiti:exclusive="true" id="startFailoverControllers" name="Start Failover Controllers"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StartAdditionalNamenode" activiti:exclusive="true" id="startAdditionalNamenode" name="Start Additional Namenode"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.InstallFailoverController" activiti:exclusive="true" id="installFailoverControllers" name="Install Failover Controllers"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StartFailoverController" activiti:exclusive="true" id="startFailoverControllers" name="Start Failover Controllers"/>
       <sequenceFlow id="_4" sourceRef="startAdditionalNamenode" targetRef="installFailoverControllers"/>
       <sequenceFlow id="_5" sourceRef="installFailoverControllers" targetRef="startFailoverControllers"/>
-      <serviceTask activiti:class="com.example.ReconfigureHBase" activiti:exclusive="true" id="reconfigureHbase" name="Reconfigure Hbase"/>
-      <serviceTask activiti:class="com.example.DeleteSecondaryNamenode" activiti:exclusive="true" id="deleteSecondaryNamenode" name="Delete Secondary NameNode"/>
-      <serviceTask activiti:class="com.example.StartAllServices" activiti:exclusive="true" id="startAllServices" name="Start All Services"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.ReconfigureHBase" activiti:exclusive="true" id="reconfigureHbase" name="Reconfigure Hbase"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.DeleteSecondaryNamenode" activiti:exclusive="true" id="deleteSecondaryNamenode" name="Delete Secondary NameNode"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StartAllServices" activiti:exclusive="true" id="startAllServices" name="Start All Services"/>
       <sequenceFlow id="_8" sourceRef="startFailoverControllers" targetRef="reconfigureHbase"/>
       <sequenceFlow id="_20" sourceRef="reconfigureHbase" targetRef="deleteSecondaryNamenode"/>
       <startEvent id="_6" name="Start Finalize"/>
       <sequenceFlow id="_7" sourceRef="_6" targetRef="startAdditionalNamenode"/>
-      <serviceTask activiti:class="com.example.StopHdfs" activiti:exclusive="true" id="stopHdfs" name="StopHdfs"/>
+      <serviceTask activiti:class="com.example.workflow.servicetask.StopHdfs" activiti:exclusive="true" id="stopHdfs" name="StopHdfs"/>
       <sequenceFlow id="_35" sourceRef="deleteSecondaryNamenode" targetRef="stopHdfs"/>
       <sequenceFlow id="_36" sourceRef="stopHdfs" targetRef="startAllServices"/>
     </subProcess>
