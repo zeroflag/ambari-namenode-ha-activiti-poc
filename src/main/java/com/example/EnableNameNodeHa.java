@@ -16,6 +16,7 @@ import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.ambari.groovy.client.AmbariClient;
 
 import com.example.ui.ConsoleUI;
 import com.example.ui.UI;
@@ -30,7 +31,7 @@ public class EnableNameNodeHa {
     TaskService taskService = processEngine.getTaskService();
     FormService formService = processEngine.getFormService();
 
-    UI ui = new ConsoleUI();
+    UI ui = new ConsoleUI(new AmbariClient("c6401.ambari.apache.org"));
     while (processInstance != null && !processInstance.isEnded()) {
       List<Task> tasks = taskService.createTaskQuery().active().list();
       for (Task task : tasks) {
