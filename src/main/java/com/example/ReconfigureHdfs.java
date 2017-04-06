@@ -84,7 +84,7 @@ public class ReconfigureHdfs extends ServiceTask {
     );
     client.modifyConfiguration(
       "core-site",
-       new Gson().fromJson("{\n" +
+       gson.fromJson("{\n" +
          "          \"fs.defaultFS\": \"hdfs:\\/\\/myserviceid\",\n" +
          "          \"fs.trash.interval\": \"360\",\n" +
          "          \"ha.failover-controller.active-standby-elector.zk.op.retries\": \"120\",\n" +
