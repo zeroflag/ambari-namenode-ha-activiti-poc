@@ -7,11 +7,13 @@ import org.activiti.engine.delegate.DelegateExecution;
 import com.google.gson.Gson;
 
 public class ReconfigureHdfs extends ServiceTask {
+  private static final Gson gson = new Gson();
+
   public void execute(DelegateExecution delegateExecution) throws Exception {
     System.out.println("Reconfiguring Hdfs");
     client.modifyConfiguration(
       "hdfs-site",
-       new Gson().fromJson("{\n" +
+       gson.fromJson("{\n" +
         "          \"dfs.block.access.token.enable\": \"true\",\n" +
         "          \"dfs.blockreport.initialDelay\": \"120\",\n" +
         "          \"dfs.blocksize\": \"134217728\",\n" +
