@@ -22,7 +22,7 @@
         <activiti:formProperty id="journalNodeInitialized" name="have you initialized journal node?" type="string"/>
       </extensionElements>
     </userTask>
-    <serviceTask activiti:class="com.example.StartComponents" activiti:exclusive="true" id="startComponents" name="Start Components"/>
+    <serviceTask activiti:class="com.example.workflow.servicetask.StartComponents" activiti:exclusive="true" id="startComponents" name="Start Components"/>
     <userTask activiti:exclusive="true" id="initMetadata" name="Initialize Metadata">
       <extensionElements>
         <activiti:formProperty id="initializedMetadata" name="Have you initialized metadata?" type="string"/>

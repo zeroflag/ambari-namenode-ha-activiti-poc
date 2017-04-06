@@ -2,6 +2,7 @@ package com.example.workflow.servicetask;
 
 import static java.util.Collections.singletonList;
 
+import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.apache.ambari.groovy.client.AmbariClient;
 
@@ -24,5 +25,13 @@ public abstract class ServiceTask implements JavaDelegate {
   protected void installComponentBlocking(String hostName, String component) throws HttpResponseException, InterruptedException {
     int requestId = client.installComponentsToHost(hostName, singletonList(component)).get(component);
     waitForRequest(requestId);
+  }
+
+  protected String selectedNameNodeHost(DelegateExecution delegateExecution) {
+    return (String) delegateExecution.getVariable("additionalNameNodeHost");
+  }
+
+  protected String serviceId(DelegateExecution delegateExecution) {
+    return (String) delegateExecution.getVariable("nameServiceId");
   }
 }

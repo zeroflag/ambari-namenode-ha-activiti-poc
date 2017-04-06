@@ -4,7 +4,8 @@
 
   public class InstallAdditionalNamenode extends ServiceTask {
     public void execute(DelegateExecution delegateExecution) throws Exception {
-      System.out.println("Install Additional Namenode");
-      installComponentBlocking("c6402.ambari.apache.org", "NAMENODE");
+      String hostName = selectedNameNodeHost(delegateExecution);
+      System.out.println("Install Additional Namenode to " + hostName);
+      installComponentBlocking(hostName, "NAMENODE");
     }
   }

@@ -80,7 +80,7 @@ public class ReconfigureHdfs extends ServiceTask {
         "          \"dfs.namenode.shared.edits.dir\": \"qjournal:\\/\\/c6402.ambari.apache.org:8485;c6401.ambari.apache.org:8485;c6403.ambari.apache.org:8485\\/myserviceid\",\n" +
         "          \"dfs.ha.fencing.methods\": \"shell(\\/bin\\/true)\",\n" +
         "          \"dfs.ha.automatic-failover.enabled\": true\n" +
-        "      }", Map.class)
+        "      }".replaceAll("myserviceid", serviceId(delegateExecution)), Map.class)
     );
     client.modifyConfiguration(
       "core-site",
@@ -106,8 +106,8 @@ public class ReconfigureHdfs extends ServiceTask {
          "          \"mapreduce.jobtracker.webinterface.trusted\": \"false\",\n" +
          "          \"net.topology.script.file.name\": \"\\/etc\\/hadoop\\/conf\\/topology_script.py\",\n" +
          "          \"ha.zookeeper.quorum\": \"c6402.ambari.apache.org:2181,c6403.ambari.apache.org:2181,c6401.ambari.apache.org:2181\"\n" +
-         "        }", Map.class)
+         "        }".replaceAll("myserviceid", serviceId(delegateExecution)), Map.class)
     );
-    installComponentBlocking("c6402.ambari.apache.org", "HDFS_CLIENT");
+    installComponentBlocking(selectedNameNodeHost(delegateExecution), "HDFS_CLIENT");
   }
 }
