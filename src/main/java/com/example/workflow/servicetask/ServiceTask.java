@@ -6,6 +6,8 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.apache.ambari.groovy.client.AmbariClient;
 
+import com.example.ui.Hosts;
+
 import groovyx.net.http.HttpResponseException;
 
 public abstract class ServiceTask implements JavaDelegate {
@@ -31,11 +33,13 @@ public abstract class ServiceTask implements JavaDelegate {
     waitForRequest(requestId);
   }
 
-  protected String selectedNameNodeHost(DelegateExecution delegateExecution) {
-    return (String) delegateExecution.getVariable("additionalNameNodeHost");
+  protected Hosts hosts(DelegateExecution context) {
+    return (Hosts) context.getVariable("additionalNameNodeHost");
   }
 
-  protected String serviceId(DelegateExecution delegateExecution) {
-    return (String) delegateExecution.getVariable("nameServiceId");
+
+  protected String serviceId(DelegateExecution context) {
+    return ((String) context.getVariable("nameServiceId"));
   }
+
 }

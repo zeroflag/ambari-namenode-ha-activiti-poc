@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 public class ReconfigureHdfs extends ServiceTask {
   private static final Gson gson = new Gson();
 
-  public void execute(DelegateExecution delegateExecution) throws Exception {
+  public void execute(DelegateExecution context) throws Exception {
     System.out.println("Reconfiguring Hdfs");
     client.modifyConfiguration(
       "hdfs-site",
@@ -80,7 +80,7 @@ public class ReconfigureHdfs extends ServiceTask {
         "          \"dfs.namenode.shared.edits.dir\": \"qjournal:\\/\\/c6402.ambari.apache.org:8485;c6401.ambari.apache.org:8485;c6403.ambari.apache.org:8485\\/myserviceid\",\n" +
         "          \"dfs.ha.fencing.methods\": \"shell(\\/bin\\/true)\",\n" +
         "          \"dfs.ha.automatic-failover.enabled\": true\n" +
-        "      }".replaceAll("myserviceid", serviceId(delegateExecution)), Map.class)
+        "      }".replaceAll("myserviceid", serviceId(context)), Map.class)
     );
     client.modifyConfiguration(
       "core-site",
@@ -106,8 +106,8 @@ public class ReconfigureHdfs extends ServiceTask {
          "          \"mapreduce.jobtracker.webinterface.trusted\": \"false\",\n" +
          "          \"net.topology.script.file.name\": \"\\/etc\\/hadoop\\/conf\\/topology_script.py\",\n" +
          "          \"ha.zookeeper.quorum\": \"c6402.ambari.apache.org:2181,c6403.ambari.apache.org:2181,c6401.ambari.apache.org:2181\"\n" +
-         "        }".replaceAll("myserviceid", serviceId(delegateExecution)), Map.class)
+         "        }".replaceAll("myserviceid", serviceId(context)), Map.class)
     );
-    installComponentBlocking(selectedNameNodeHost(delegateExecution), "HDFS_CLIENT");
+    installComponentBlocking(hosts(context).newNameNodeHost, "HDFS_CLIENT");
   }
 }

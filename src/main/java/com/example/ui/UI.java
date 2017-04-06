@@ -2,7 +2,7 @@ package com.example.ui;
 
 public interface UI {
   String gettingStarted();
-  String selectHosts();
+  Hosts selectHosts();
   String review();
   String manualStep1();
   String manualStep2();

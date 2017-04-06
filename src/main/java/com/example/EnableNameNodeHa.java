@@ -19,6 +19,7 @@ import org.activiti.engine.task.Task;
 import org.apache.ambari.groovy.client.AmbariClient;
 
 import com.example.ui.ConsoleUI;
+import com.example.ui.Hosts;
 import com.example.ui.UI;
 
 public class EnableNameNodeHa {
@@ -45,8 +46,8 @@ public class EnableNameNodeHa {
               variables.put(formProperty.getId(), nameServiceId);
               break;
             case "additionalNameNodeHost":
-              String newNameNodeHost = ui.selectHosts();
-              variables.put(formProperty.getId(), newNameNodeHost);
+              Hosts hosts = ui.selectHosts();
+              variables.put(formProperty.getId(), hosts);
               break;
             case "review":
               String answer = ui.review();

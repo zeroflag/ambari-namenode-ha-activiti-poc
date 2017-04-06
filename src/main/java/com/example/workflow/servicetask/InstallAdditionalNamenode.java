@@ -3,8 +3,8 @@
   import org.activiti.engine.delegate.DelegateExecution;
 
   public class InstallAdditionalNamenode extends ServiceTask {
-    public void execute(DelegateExecution delegateExecution) throws Exception {
-      String hostName = selectedNameNodeHost(delegateExecution);
+    public void execute(DelegateExecution context) throws Exception {
+      String hostName = hosts(context).newNameNodeHost;
       System.out.println("Install Additional Namenode to " + hostName);
       installComponentBlocking(hostName, "NAMENODE");
     }

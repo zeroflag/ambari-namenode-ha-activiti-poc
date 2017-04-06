@@ -68,13 +68,13 @@ public class ConsoleUI implements UI {
   }
 
   @Override
-  public String selectHosts() {
+  public Hosts selectHosts() {
     System.out.println("\nSelect Hosts");
     System.out.println("===========");
     System.out.println("Select a host that will be running the additional NameNode. In addition," +
       " select the hosts to run JournalNodes, which store NameNode edit logs in a fault tolerant manner.");
     showHosts();
-    return selectHost();
+    return new Hosts(currentNameNodeHost, selectHost(), client.getClusterHosts());
   }
 
   private void showHosts() {
@@ -111,6 +111,7 @@ public class ConsoleUI implements UI {
       "This information is for review only and is not editable.");
     System.out.println("NameService ID: " + nameServiceId);
     System.out.println("Additional NameNode: " + newNameNodeHost);
+    System.out.println("Journal Nodes: " + client.getClusterHosts());
     System.out.println("Is this ok? [yes/no]:");
     return scanner.nextLine();
   }
