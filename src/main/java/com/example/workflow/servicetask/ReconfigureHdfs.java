@@ -70,17 +70,20 @@ public class ReconfigureHdfs extends ServiceTask {
         "          \"dfs.nameservices\": \"myserviceid\",\n" +
         "          \"dfs.internal.nameservices\": \"myserviceid\",\n" +
         "          \"dfs.ha.namenodes.myserviceid\": \"nn1,nn2\",\n" +
-        "          \"dfs.namenode.rpc-address.myserviceid.nn1\": \"c6401.ambari.apache.org:8020\",\n" +
-        "          \"dfs.namenode.rpc-address.myserviceid.nn2\": \"c6402.ambari.apache.org:8020\",\n" +
-        "          \"dfs.namenode.http-address.myserviceid.nn1\": \"c6401.ambari.apache.org:50070\",\n" +
-        "          \"dfs.namenode.http-address.myserviceid.nn2\": \"c6402.ambari.apache.org:50070\",\n" +
-        "          \"dfs.namenode.https-address.myserviceid.nn1\": \"c6401.ambari.apache.org:50470\",\n" +
-        "          \"dfs.namenode.https-address.myserviceid.nn2\": \"c6402.ambari.apache.org:50470\",\n" +
+        "          \"dfs.namenode.rpc-address.myserviceid.nn1\": \"__OLDNNHOST__:8020\",\n" +
+        "          \"dfs.namenode.rpc-address.myserviceid.nn2\": \"__NEWNNHOST__:8020\",\n" +
+        "          \"dfs.namenode.http-address.myserviceid.nn1\": \"__OLDNNHOST__:50070\",\n" +
+        "          \"dfs.namenode.http-address.myserviceid.nn2\": \"__NEWNNHOST__:50070\",\n" +
+        "          \"dfs.namenode.https-address.myserviceid.nn1\": \"__OLDNNHOST__:50470\",\n" +
+        "          \"dfs.namenode.https-address.myserviceid.nn2\": \"__NEWNNHOST__:50470\",\n" +
         "          \"dfs.client.failover.proxy.provider.myserviceid\": \"org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider\",\n" +
-        "          \"dfs.namenode.shared.edits.dir\": \"qjournal:\\/\\/c6402.ambari.apache.org:8485;c6401.ambari.apache.org:8485;c6403.ambari.apache.org:8485\\/myserviceid\",\n" +
+        "          \"dfs.namenode.shared.edits.dir\": \"qjournal:\\/\\/__NEWNNHOST__:8485;__OLDNNHOST__:8485;c6403.ambari.apache.org:8485\\/myserviceid\",\n" +
         "          \"dfs.ha.fencing.methods\": \"shell(\\/bin\\/true)\",\n" +
         "          \"dfs.ha.automatic-failover.enabled\": true\n" +
-        "      }".replaceAll("myserviceid", serviceId(context)), Map.class)
+        "      }"
+          .replaceAll("myserviceid", serviceId(context))
+          .replaceAll("__OLDNNHOST__", hosts(context).currentNameNodeHost)
+          .replaceAll("__NEWNNHOST__", hosts(context).newNameNodeHost), Map.class)
     );
     client.modifyConfiguration(
       "core-site",
@@ -92,7 +95,7 @@ public class ReconfigureHdfs extends ServiceTask {
          "          \"hadoop.proxyuser.hdfs.groups\": \"*\",\n" +
          "          \"hadoop.proxyuser.hdfs.hosts\": \"*\",\n" +
          "          \"hadoop.proxyuser.root.groups\": \"*\",\n" +
-         "          \"hadoop.proxyuser.root.hosts\": \"c6401.ambari.apache.org\",\n" +
+         "          \"hadoop.proxyuser.root.hosts\": \"__OLDNNHOST__\",\n" +
          "          \"hadoop.security.auth_to_local\": \"DEFAULT\",\n" +
          "          \"hadoop.security.authentication\": \"simple\",\n" +
          "          \"hadoop.security.authorization\": \"false\",\n" +
@@ -105,8 +108,11 @@ public class ReconfigureHdfs extends ServiceTask {
          "          \"ipc.server.tcpnodelay\": \"true\",\n" +
          "          \"mapreduce.jobtracker.webinterface.trusted\": \"false\",\n" +
          "          \"net.topology.script.file.name\": \"\\/etc\\/hadoop\\/conf\\/topology_script.py\",\n" +
-         "          \"ha.zookeeper.quorum\": \"c6402.ambari.apache.org:2181,c6403.ambari.apache.org:2181,c6401.ambari.apache.org:2181\"\n" +
-         "        }".replaceAll("myserviceid", serviceId(context)), Map.class)
+         "          \"ha.zookeeper.quorum\": \"__NEWNNHOST__:2181,c6403.ambari.apache.org:2181,__OLDNNHOST__:2181\"\n" +
+         "        }"
+           .replaceAll("myserviceid", serviceId(context))
+           .replaceAll("__OLDNNHOST__", hosts(context).currentNameNodeHost)
+           .replaceAll("__NEWNNHOST__", hosts(context).newNameNodeHost), Map.class)
     );
     installComponentBlocking(hosts(context).newNameNodeHost, "HDFS_CLIENT");
   }
