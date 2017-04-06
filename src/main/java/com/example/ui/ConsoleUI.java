@@ -92,6 +92,7 @@ public class ConsoleUI implements UI {
 
   private String selectHost() {
     while (true) {
+      System.out.println("Select additional namenode host.");
       System.out.println("Enter host number:");
       try {
         newNameNodeHost = hostCandidates().get(Integer.parseInt(scanner.nextLine()) - 1);
