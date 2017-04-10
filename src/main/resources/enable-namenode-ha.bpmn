@@ -9,7 +9,7 @@
     </userTask>
     <userTask activiti:assignee="kermit" activiti:exclusive="true" id="selectHosts" name="Select additional namenode host">
       <extensionElements>
-        <activiti:formProperty id="additionalNameNodeHost" name="Additional NameNode Host" type="string"/>
+        <activiti:formProperty id="additionalNameNodeHost" name="Additional NameNode Host"/>
       </extensionElements>
     </userTask>
     <userTask activiti:assignee="kermit" activiti:exclusive="true" id="createCheckPoint" name="Create checkpoint on namenode">
