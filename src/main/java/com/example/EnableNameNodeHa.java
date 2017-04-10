@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.activiti.engine.FormService;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
@@ -23,12 +24,14 @@ public class EnableNameNodeHa {
   private final ProcessEngine processEngine;
   private final TaskService taskService;
   private final FormService formService;
+  private final RuntimeService runtimeService;
   private UI ui;
 
   public EnableNameNodeHa(String bpmnName) {
     this.processEngine = processEngine();
     this.taskService = processEngine.getTaskService();
     this.formService = processEngine.getFormService();
+    this.runtimeService = processEngine.getRuntimeService();
     deploy(bpmnName);
   }
 
@@ -49,7 +52,7 @@ public class EnableNameNodeHa {
   }
 
   public void runWorkflow() {
-    String processId = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess").getId();
+    String processId = runtimeService.startProcessInstanceByKey("enableNamenodeHaProcess").getId();
     ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
     while (!ended(processId))
       completeUserTasks();
@@ -59,6 +62,13 @@ public class EnableNameNodeHa {
   private boolean ended(String processId) {
     ProcessInstance process = reloadProcess(processId);
     return process == null || process.isEnded();
+  }
+
+  private ProcessInstance reloadProcess(String processId) {
+    return runtimeService
+      .createProcessInstanceQuery()
+      .processInstanceId(processId)
+      .singleResult();
   }
 
   private void completeUserTasks() {
@@ -81,13 +91,6 @@ public class EnableNameNodeHa {
       case "initializedMetadata": return ui.manualStep3();
       default: throw new RuntimeException("Unknown formId " + formProperty.getId());
     }
-  }
-
-  private ProcessInstance reloadProcess(String processId) {
-    return processEngine.getRuntimeService()
-      .createProcessInstanceQuery()
-      .processInstanceId(processId)
-      .singleResult();
   }
 
   public static void main(String[] args) throws ParseException {
