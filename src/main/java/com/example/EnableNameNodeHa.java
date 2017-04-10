@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.activiti.engine.FormService;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
@@ -25,11 +24,9 @@ public class EnableNameNodeHa {
   public static void main(String[] args) throws ParseException {
     ProcessEngine processEngine = processEngine();
     deploy(processEngine, "enable-namenode-ha.bpmn");
-    RuntimeService runtimeService = processEngine.getRuntimeService();
-    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("enableNamenodeHaProcess");
+    ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess");
     TaskService taskService = processEngine.getTaskService();
     FormService formService = processEngine.getFormService();
-
     UI ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
     while (processInstance != null && !processInstance.isEnded()) {
       for (Task task : taskService.createTaskQuery().active().list()) {
@@ -39,12 +36,25 @@ public class EnableNameNodeHa {
           variables.put(formProperty.getId(), getUserInput(ui, formProperty));
         taskService.complete(task.getId(), variables);
       }
-      processInstance = runtimeService
-        .createProcessInstanceQuery()
-        .processInstanceId(processInstance.getId())
-        .singleResult();
+      processInstance = reloadProcess(processEngine, processInstance.getId());
     }
     ui.close();
+  }
+
+  private static ProcessEngine processEngine() {
+    return new StandaloneProcessEngineConfiguration()
+      .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
+      .setJdbcUsername("sa")
+      .setJdbcPassword("")
+      .setJdbcDriver("org.h2.Driver")
+      .setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_TRUE).buildProcessEngine();
+  }
+
+  private static void deploy(ProcessEngine processEngine, String fileName) {
+    processEngine.getRepositoryService()
+      .createDeployment()
+      .addClasspathResource(fileName)
+      .deploy();
   }
 
   private static Object getUserInput(UI ui, FormProperty formProperty) {
@@ -59,19 +69,10 @@ public class EnableNameNodeHa {
     }
   }
 
-  private static void deploy(ProcessEngine processEngine, String fileName) {
-    processEngine.getRepositoryService()
-      .createDeployment()
-      .addClasspathResource(fileName)
-      .deploy();
-  }
-
-  private static ProcessEngine processEngine() {
-    return new StandaloneProcessEngineConfiguration()
-      .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
-      .setJdbcUsername("sa")
-      .setJdbcPassword("")
-      .setJdbcDriver("org.h2.Driver")
-      .setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_TRUE).buildProcessEngine();
+  private static ProcessInstance reloadProcess(ProcessEngine processEngine, String processId) {
+    return processEngine.getRuntimeService()
+      .createProcessInstanceQuery()
+      .processInstanceId(processId)
+      .singleResult();
   }
 }

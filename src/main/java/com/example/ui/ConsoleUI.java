@@ -21,10 +21,10 @@ import groovyx.net.http.HttpResponseDecorator;
 public class ConsoleUI implements UI {
   private static final Gson GSON = new Gson();
   private final Scanner scanner = new Scanner(System.in);
+  private final AmbariClient client;
   private String nameServiceId;
   private String newNameNodeHost;
   private String currentNameNodeHost;
-  private final AmbariClient client;
 
   public ConsoleUI(AmbariClient ambariClient) {
     this.client = ambariClient;

@@ -21,7 +21,8 @@ public abstract class ServerTask implements JavaDelegate {
       System.out.print(".");
       if (++count % 20 == 0)
         System.out.print(progress + "%");
-      if (progress < 0) throw new RuntimeException("Request failed: " + requestId);
+      if (progress < 0)
+        throw new RuntimeException("Request failed: " + requestId);
       Thread.sleep(1000);
       progress = client.getRequestProgress(requestId).longValue();
     }
