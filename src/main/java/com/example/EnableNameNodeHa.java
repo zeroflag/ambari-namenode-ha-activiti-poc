@@ -54,12 +54,10 @@ public class EnableNameNodeHa {
               variables.put(formProperty.getId(), answer);
               break;
             case "checkPointCreated":
-              answer = ui.manualStep1();
-              variables.put(formProperty.getId(), answer);
+              ui.manualStep1();
               break;
             case "journalNodeInitialized":
-              answer = ui.manualStep2();
-              variables.put(formProperty.getId(), answer);
+              ui.manualStep2();
               break;
             case "initializedMetadata":
               answer = ui.manualStep3();

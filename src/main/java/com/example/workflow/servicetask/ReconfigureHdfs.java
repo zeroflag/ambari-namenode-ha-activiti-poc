@@ -6,7 +6,7 @@ import org.activiti.engine.delegate.DelegateExecution;
 
 import com.google.gson.Gson;
 
-public class ReconfigureHdfs extends ServiceTask {
+public class ReconfigureHdfs extends ServerTask {
   private static final Gson gson = new Gson();
 
   public void execute(DelegateExecution context) throws Exception {

@@ -1,6 +1,10 @@
 package com.example.ui;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -8,8 +12,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.ambari.groovy.client.AmbariClient;
+import org.apache.commons.io.IOUtils;
+
+import com.google.gson.Gson;
+
+import groovyx.net.http.HttpResponseDecorator;
 
 public class ConsoleUI implements UI {
+  private static final Gson GSON = new Gson();
   private final Scanner scanner = new Scanner(System.in);
   private String nameServiceId;
   private String newNameNodeHost;
@@ -117,22 +127,65 @@ public class ConsoleUI implements UI {
   }
 
   @Override
-  public String manualStep1() {
+  public void manualStep1() {
     System.out.println("Manual step (create checkpoint)");
     System.out.println("Please log in to " + currentNameNodeHost + " and run the following commands:");
-    System.out.println("sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter'");
-    System.out.println("sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'");
-    System.out.println("Confirm you've executed the commands [yes/no]:");
-    return scanner.nextLine();
+    System.out.println("sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter' && sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'");
+    waitUserToCreateCheckPoint();
+  }
+
+  private void waitUserToCreateCheckPoint() {
+    String safeMode = null;
+    do {
+      try {
+        Map<String, Object> info = hostComponentInfo(currentNameNodeHost, "NAMENODE");
+        safeMode = (String) ((Map) ((Map) ((Map) info.get("metrics")).get("dfs")).get("namenode")).get("Safemode");
+        Thread.sleep(1500);
+      } catch (NullPointerException again) {
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+      }
+    } while (safeMode == null || safeMode.trim().isEmpty());
+  }
+
+  protected Map<String, Object> hostComponentInfo(String hostName, String component) {
+    try {
+      String text = IOUtils.toString(((java.io.StringReader)((HttpResponseDecorator)client.getAmbari().get(
+        new HashMap<String, Object>() {{
+          put("path", String.format("clusters/%s/hosts/%s/host_components/%s", client.getClusterName(), hostName, component.toUpperCase()));
+        }}
+      )).getData()));
+      return GSON.fromJson(text, Map.class);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
-  public String manualStep2() {
+  public void manualStep2() {
     System.out.println("Manual step (initialize metadata)");
     System.out.println("Please log in to " + currentNameNodeHost + " and run the following commands:");
     System.out.println("sudo su hdfs -l -c 'hdfs namenode -initializeSharedEdits'");
-    System.out.println("Confirm you've executed the commands [yes/no]:");
-    return scanner.nextLine();
+    waitForUserToInitializeJournalNode();
+  }
+
+  private void waitForUserToInitializeJournalNode() {
+      String formatted = null;
+      do {
+        try {
+          Map<String, Object> info = hostComponentInfo(currentNameNodeHost, "JOURNALNODE");
+          String status = (String) ((Map) ((Map) ((Map) info.get("metrics")).get("dfs")).get("journalnode")).get("journalsStatus");
+          formatted = (String)((Map)GSON.fromJson(status, Map.class).get(nameServiceId)).get("Formatted");
+          Thread.sleep(1500);
+        } catch (NullPointerException again) {
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          throw new RuntimeException(e);
+        }
+      } while (!"true".equalsIgnoreCase(formatted));
   }
 
   @Override
