@@ -5,6 +5,7 @@ import static org.activiti.engine.ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TR
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.activiti.engine.FormService;
 import org.activiti.engine.ProcessEngine;
@@ -60,15 +61,14 @@ public class EnableNameNodeHa {
   }
 
   private boolean ended(String processId) {
-    ProcessInstance process = reloadProcess(processId);
-    return process == null || process.isEnded();
+    return reloadProcess(processId).map(proc ->proc.isEnded()).orElse(true);
   }
 
-  private ProcessInstance reloadProcess(String processId) {
-    return runtimeService
+  private Optional<ProcessInstance> reloadProcess(String processId) {
+    return Optional.ofNullable(runtimeService
       .createProcessInstanceQuery()
       .processInstanceId(processId)
-      .singleResult();
+      .singleResult());
   }
 
   private void completeUserTasks() {
