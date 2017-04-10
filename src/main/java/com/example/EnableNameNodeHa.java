@@ -20,6 +20,7 @@ import com.example.ui.ConsoleUI;
 import com.example.ui.UI;
 
 public class EnableNameNodeHa {
+  public static final String AMBARI_SERVER_HOST = "c6401.ambari.apache.org";
 
   public static void main(String[] args) throws ParseException {
     ProcessEngine processEngine = processEngine();
@@ -29,7 +30,7 @@ public class EnableNameNodeHa {
     TaskService taskService = processEngine.getTaskService();
     FormService formService = processEngine.getFormService();
 
-    UI ui = new ConsoleUI(new AmbariClient("c6401.ambari.apache.org"));
+    UI ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
     while (processInstance != null && !processInstance.isEnded()) {
       for (Task task : taskService.createTaskQuery().active().list()) {
         System.out.println("Processing Task [" + task.getName() + "]");

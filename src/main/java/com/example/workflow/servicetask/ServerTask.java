@@ -1,5 +1,6 @@
 package com.example.workflow.servicetask;
 
+import static com.example.EnableNameNodeHa.AMBARI_SERVER_HOST;
 import static java.util.Collections.singletonList;
 
 import org.activiti.engine.delegate.DelegateExecution;
@@ -11,7 +12,7 @@ import com.example.ui.Hosts;
 import groovyx.net.http.HttpResponseException;
 
 public abstract class ServerTask implements JavaDelegate {
-  protected final AmbariClient client = new AmbariClient("c6401.ambari.apache.org");
+  protected final AmbariClient client = new AmbariClient(AMBARI_SERVER_HOST);
 
   protected void waitForRequest(int requestId) throws InterruptedException {
     int count = 0;
