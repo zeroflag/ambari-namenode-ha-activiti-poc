@@ -20,25 +20,15 @@ import com.example.ui.UI;
 
 public class EnableNameNodeHa {
   public static final String AMBARI_SERVER_HOST = "c6401.ambari.apache.org";
+  private final ProcessEngine processEngine;
+  private final TaskService taskService;
+  private final FormService formService;
 
-  public static void main(String[] args) throws ParseException {
-    ProcessEngine processEngine = processEngine();
-    deploy(processEngine, "enable-namenode-ha.bpmn");
-    ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess");
-    TaskService taskService = processEngine.getTaskService();
-    FormService formService = processEngine.getFormService();
-    UI ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
-    while (processInstance != null && !processInstance.isEnded()) {
-      for (Task task : taskService.createTaskQuery().active().list()) {
-        System.out.println("Processing Task [" + task.getName() + "]");
-        Map<String, Object> variables = new HashMap<>();
-        for (FormProperty formProperty : formService.getTaskFormData(task.getId()).getFormProperties())
-          variables.put(formProperty.getId(), getUserInput(ui, formProperty));
-        taskService.complete(task.getId(), variables);
-      }
-      processInstance = reloadProcess(processEngine, processInstance.getId());
-    }
-    ui.close();
+  public EnableNameNodeHa(String bpmnName) {
+    this.processEngine = processEngine();
+    this.taskService = processEngine.getTaskService();
+    this.formService = processEngine.getFormService();
+    deploy(bpmnName);
   }
 
   private static ProcessEngine processEngine() {
@@ -50,11 +40,27 @@ public class EnableNameNodeHa {
       .setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_TRUE).buildProcessEngine();
   }
 
-  private static void deploy(ProcessEngine processEngine, String fileName) {
+  private void deploy(String fileName) {
     processEngine.getRepositoryService()
       .createDeployment()
       .addClasspathResource(fileName)
       .deploy();
+  }
+
+  public void runWorkflow() {
+    ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess");
+    UI ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
+    while (processInstance != null && !processInstance.isEnded()) {
+      for (Task task : taskService.createTaskQuery().active().list()) {
+        System.out.println("Processing Task [" + task.getName() + "]");
+        Map<String, Object> variables = new HashMap<>();
+        for (FormProperty formProperty : formService.getTaskFormData(task.getId()).getFormProperties())
+          variables.put(formProperty.getId(), getUserInput(ui, formProperty));
+        taskService.complete(task.getId(), variables);
+      }
+      processInstance = reloadProcess(processInstance.getId());
+    }
+    ui.close();
   }
 
   private static Object getUserInput(UI ui, FormProperty formProperty) {
@@ -69,10 +75,15 @@ public class EnableNameNodeHa {
     }
   }
 
-  private static ProcessInstance reloadProcess(ProcessEngine processEngine, String processId) {
+  private ProcessInstance reloadProcess(String processId) {
     return processEngine.getRuntimeService()
       .createProcessInstanceQuery()
       .processInstanceId(processId)
       .singleResult();
+  }
+
+  public static void main(String[] args) throws ParseException {
+    EnableNameNodeHa workflow = new EnableNameNodeHa("enable-namenode-ha.bpmn");
+    workflow.runWorkflow();
   }
 }
