@@ -23,6 +23,7 @@ public class EnableNameNodeHa {
   private final ProcessEngine processEngine;
   private final TaskService taskService;
   private final FormService formService;
+  private UI ui;
 
   public EnableNameNodeHa(String bpmnName) {
     this.processEngine = processEngine();
@@ -48,19 +49,26 @@ public class EnableNameNodeHa {
   }
 
   public void runWorkflow() {
-    ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess");
-    UI ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
-    while (processInstance != null && !processInstance.isEnded()) {
-      for (Task task : taskService.createTaskQuery().active().list()) {
-        System.out.println("Processing Task [" + task.getName() + "]");
-        Map<String, Object> variables = new HashMap<>();
-        for (FormProperty formProperty : formService.getTaskFormData(task.getId()).getFormProperties())
-          variables.put(formProperty.getId(), getUserInput(ui, formProperty));
-        taskService.complete(task.getId(), variables);
-      }
-      processInstance = reloadProcess(processInstance.getId());
-    }
+    String processId = processEngine.getRuntimeService().startProcessInstanceByKey("enableNamenodeHaProcess").getId();
+    ui = new ConsoleUI(new AmbariClient(AMBARI_SERVER_HOST));
+    while (!ended(processId))
+      completeUserTasks();
     ui.close();
+  }
+
+  private boolean ended(String processId) {
+    ProcessInstance process = reloadProcess(processId);
+    return process == null || process.isEnded();
+  }
+
+  private void completeUserTasks() {
+    for (Task task : taskService.createTaskQuery().active().list()) {
+      System.out.println("Processing Task [" + task.getName() + "]");
+      Map<String, Object> variables = new HashMap<>();
+      for (FormProperty formProperty : formService.getTaskFormData(task.getId()).getFormProperties())
+        variables.put(formProperty.getId(), getUserInput(ui, formProperty));
+      taskService.complete(task.getId(), variables);
+    }
   }
 
   private static Object getUserInput(UI ui, FormProperty formProperty) {
