@@ -4,14 +4,12 @@ import static org.activiti.engine.ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TR
 
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.FormService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.form.FormData;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -19,7 +17,6 @@ import org.activiti.engine.task.Task;
 import org.apache.ambari.groovy.client.AmbariClient;
 
 import com.example.ui.ConsoleUI;
-import com.example.ui.Hosts;
 import com.example.ui.UI;
 
 public class EnableNameNodeHa {
@@ -34,39 +31,11 @@ public class EnableNameNodeHa {
 
     UI ui = new ConsoleUI(new AmbariClient("c6401.ambari.apache.org"));
     while (processInstance != null && !processInstance.isEnded()) {
-      List<Task> tasks = taskService.createTaskQuery().active().list();
-      for (Task task : tasks) {
+      for (Task task : taskService.createTaskQuery().active().list()) {
         System.out.println("Processing Task [" + task.getName() + "]");
         Map<String, Object> variables = new HashMap<>();
-        FormData formData = formService.getTaskFormData(task.getId());
-        for (FormProperty formProperty : formData.getFormProperties()) {
-          switch (formProperty.getId()) {
-            case "nameServiceId":
-              String nameServiceId = ui.gettingStarted();
-              variables.put(formProperty.getId(), nameServiceId);
-              break;
-            case "additionalNameNodeHost":
-              Hosts hosts = ui.selectHosts();
-              variables.put(formProperty.getId(), hosts);
-              break;
-            case "review":
-              String answer = ui.review();
-              variables.put(formProperty.getId(), answer);
-              break;
-            case "checkPointCreated":
-              ui.manualStep1();
-              break;
-            case "journalNodeInitialized":
-              ui.manualStep2();
-              break;
-            case "initializedMetadata":
-              answer = ui.manualStep3();
-              variables.put(formProperty.getId(), answer);
-              break;
-            default:
-              throw new RuntimeException("Unknown formId " + formProperty.getId());
-          }
-        }
+        for (FormProperty formProperty : formService.getTaskFormData(task.getId()).getFormProperties())
+          variables.put(formProperty.getId(), getUserInput(ui, formProperty));
         taskService.complete(task.getId(), variables);
       }
       processInstance = runtimeService
@@ -75,6 +44,18 @@ public class EnableNameNodeHa {
         .singleResult();
     }
     ui.close();
+  }
+
+  private static Object getUserInput(UI ui, FormProperty formProperty) {
+    switch (formProperty.getId()) {
+      case "nameServiceId": return ui.gettingStarted();
+      case "additionalNameNodeHost": return ui.selectHosts();
+      case "review": return ui.review();
+      case "checkPointCreated": return ui.manualStep1();
+      case "journalNodeInitialized": return ui.manualStep2();
+      case "initializedMetadata": return ui.manualStep3();
+      default: throw new RuntimeException("Unknown formId " + formProperty.getId());
+    }
   }
 
   private static void deploy(ProcessEngine processEngine, String fileName) {

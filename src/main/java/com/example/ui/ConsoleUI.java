@@ -127,11 +127,12 @@ public class ConsoleUI implements UI {
   }
 
   @Override
-  public void manualStep1() {
+  public boolean manualStep1() {
     System.out.println("Manual step (create checkpoint)");
     System.out.println("Please log in to " + currentNameNodeHost + " and run the following commands:");
     System.out.println("sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter' && sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'");
     waitUserToCreateCheckPoint();
+    return true;
   }
 
   private void waitUserToCreateCheckPoint() {
@@ -165,11 +166,12 @@ public class ConsoleUI implements UI {
   }
 
   @Override
-  public void manualStep2() {
+  public boolean manualStep2() {
     System.out.println("Manual step (initialize metadata)");
     System.out.println("Please log in to " + currentNameNodeHost + " and run the following commands:");
     System.out.println("sudo su hdfs -l -c 'hdfs namenode -initializeSharedEdits'");
     waitForUserToInitializeJournalNode();
+    return true;
   }
 
   private void waitForUserToInitializeJournalNode() {
